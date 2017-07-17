@@ -1,9 +1,14 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
+const bodyParser = require('body-parser')
 
 const app = express()
 
 app.use(express.static('public'))
+// without this, we can't read the req.body
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
 
 app.engine('handlebars', exphbs({
   defaultLayout: 'main',
@@ -19,9 +24,18 @@ app.get('/search', function (req, res) {
   res.render('search')
 })
 
+app.get('/playlist', function (req, res) {
+  res.render('playlist/index')
+})
+
+// listen to the post request and read the form data
+app.post('/playlist', function (req, res) {
+  res.send(req.body)
+})
+
 const port = 4000
 app.listen(port, function () {
-  console.log('running flickes at ' + port)
+  console.log('running flickies at ' + port)
 })
 
 // const mongoose = require('mongoose')
