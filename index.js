@@ -1,6 +1,15 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+const url = 'mongodb://localhost:27017/flickies'
+const Playlist = require('./models/Playlist')
+
+//connect to db
+mongoose.connect(url, {
+  useMongoClient: true
+})
+mongoose.Promise = global.Promise
 
 const app = express()
 
@@ -25,12 +34,25 @@ app.get('/search', function (req, res) {
 })
 
 app.get('/playlist', function (req, res) {
-  res.render('playlist/index')
+  Playlist.find({}, function(err, allPlaylists) {
+    if (err) throw err
+    res.render('playlist/index', {
+      playlists: allPlaylists
+    })
+  })
 })
 
 // listen to the post request and read the form data
 app.post('/playlist', function (req, res) {
-  res.send(req.body)
+  var newPlaylist = new Playlist({
+    name: req.body.name,
+    priority: req.body.priority
+  })
+  newPlaylist.save(function(err, newPlaylist) {
+    if (err) throw err
+    console.log('New playlist is saved')
+    res.redirect('/playlist')
+  })
 })
 
 const port = 4000
@@ -38,14 +60,7 @@ app.listen(port, function () {
   console.log('running flickies at ' + port)
 })
 
-// const mongoose = require('mongoose')
-// const url = 'mongodb://localhost:27017/flickies'
-// // connect to mongo
-// mongoose.connect(url, {
-//   useMongoClient: true
-// })
-// mongoose.Promise = global.Promise
-//
+
 // const Movie = require('./models/Movie')
 // const User = require('./models/User')
 //

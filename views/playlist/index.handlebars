@@ -5,9 +5,19 @@
     Movie Name
     <input type="text" name="name" value="">
   </label>
-  
+
   <label for="priority">Priority level</label>
   <input id='priority' type="text" name="priority" value="">
 
   <button type="submit" name="button">Create</button>
 </form>
+
+{{!--Render all playlist data--}}
+<ul>
+  {{#each playlists as |playlist|}}
+  <li>
+    {{playlist.name}}
+    {{playlist.priority}}
+  </li>
+  {{/each}}
+</ul>
